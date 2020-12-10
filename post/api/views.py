@@ -27,10 +27,10 @@ def api_details_post_view(request):
 
 
 @api_view(['PUT'])
-def api_update_post_view(request):
+def api_update_post_view(request, pk):
     try:
         # pk is db primary key of that table
-        post_data = Post.objects.get(pk=2)
+        post_data = Post.objects.get(pk=pk)
 
     except ObjectDoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
@@ -51,15 +51,15 @@ def api_update_post_view(request):
 
 @api_view(['POST'])
 def api_create_post_view(request):
-    account = Post.objects.get(pk=1)
-    p = Post(user=account)
+    # account = Post.objects.get()
+    # p = Post(user=account)
 
     if request.method == "POST":
-        serializer = PostSerializers(p, data=request.data)
+        serializer = PostSerializers(data=request.data)
         data = {}
         if serializer.is_valid():
             serializer.save()
-            data["msg"] = status.HTTP_201_CREATED
+            data["msg"] = "Post Created"
         else:
             data["msg"] = status.HTTP_400_BAD_REQUEST
 
@@ -67,11 +67,11 @@ def api_create_post_view(request):
 
 
 @api_view(['DELETE'])
-def api_delete_post_view(request):
+def api_delete_post_view(request, pk):
     try:
-        post_data = Post.objects.get(pk=1)
+        post_data = Post.objects.get(pk=pk)
     except ObjectDoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "DELETE":
         operation = post_data.delete()

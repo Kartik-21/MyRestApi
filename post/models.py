@@ -6,6 +6,6 @@ from django.conf import settings
 
 
 class Post(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, null=False, blank=False)
     time = models.DateTimeField(auto_now_add=True, null=True)
