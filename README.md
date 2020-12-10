@@ -8,7 +8,7 @@
     - pip install djangorestframework
 
 # Project
-   
+        (first setup then create update)
     - django-admin startproject tutorial
     - python manage.py migrate
     - python manage.py createsuperuser --email admin@example.com --username admin
