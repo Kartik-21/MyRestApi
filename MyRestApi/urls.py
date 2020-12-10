@@ -20,6 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # rest_urls
-    path('posts/', include('post.api.urls')),
+    path('posts/', include('userpost.api.urls')),
 
 ]

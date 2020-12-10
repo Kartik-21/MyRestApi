@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # local
-    'post',
+    'userpost',
 ]
 
 MIDDLEWARE = [
