@@ -69,7 +69,7 @@ def api_create_post_view(request):
 @api_view(['DELETE'])
 def api_delete_post_view(request):
     try:
-        post_data = Post.objects.get()
+        post_data = Post.objects.get(pk=1)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
