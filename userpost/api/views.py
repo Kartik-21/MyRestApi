@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from userpost.models import UserPost
 from userpost.api.serializers import PostSerializers
+from rest_framework.views import APIView
 
 
 @api_view(['GET'])
@@ -86,3 +87,47 @@ def api_delete_post_view(request, pk):
             data["msg"] = "delete failed"
 
         return JsonResponse(data=data)
+
+
+# get , post
+class UserPostAPIView(APIView):
+
+    def get(self, request):
+        up = UserPost.objects.all()
+        se = PostSerializers(up, many=True)
+        return Response(se.data)
+
+    def post(self, request):
+        up = request.data
+        s = PostSerializers(data=up)
+        if s.is_valid():
+            s.save()
+            return Response(s.data)
+
+
+# put, delete
+class UserPostCUDAPIView(APIView):
+
+    def get_object(self, id):
+        try:
+            return UserPost.objects.get(pk=id)
+        except UserPost.DoesNotExist:
+            return Response({"error": "object not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, id=None):
+        d = request.data
+        i = self.get_object(id)
+        s = PostSerializers(i, data=d, partial=True)
+        if s.is_valid():
+            s.save()
+            return Response(s.data)
+        else:
+            return Response({"error": "not update"})
+
+    def delete(self, request, id=None):
+        i = self.get_object(id)
+        o = i.delete()
+        if o:
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status.HTTP_400_BAD_REQUEST)
