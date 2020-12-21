@@ -123,11 +123,3 @@ class UserPostCUDAPIView(APIView):
             return Response(s.data)
         else:
             return Response({"error": "not update"})
-
-    def delete(self, request, id=None):
-        i = self.get_object(id)
-        o = i.delete()
-        if o:
-            return Response(status=status.HTTP_200_OK)
-        else:
-            return Response(status.HTTP_400_BAD_REQUEST)

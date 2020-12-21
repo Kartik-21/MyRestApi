@@ -10,8 +10,7 @@ urlpatterns = [
     path(r'create/', api_create_post_view),
     path(r'delete/<int:pk>/', api_delete_post_view),
     path(r'v2/view/', UserPostAPIView.as_view()),
-    path(r'v2/update/<int:id>/', UserPostCUDAPIView.as_view()),
-    path(r'v2/delete/<int:id>/', UserPostCUDAPIView.as_view())
+    path(r'v2/update/<int:id>/', UserPostCUDAPIView.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
