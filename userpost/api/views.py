@@ -5,24 +5,26 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.core.exceptions import ObjectDoesNotExist
 
-from userpost.models import UserPost
-from userpost.api.serializers import PostSerializers
+from userpost.models import UserPost, ShowPost
+from userpost.api.serializers import PostSerializers, ShowPostSerializers
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 
 @api_view(['GET'])
 def api_details_post_view(request):
     data = {}
-    try:
-        post_data = UserPost.objects.all()
-
-    except UserPost.DoesNotExist:
-        data["msg"] = "object not found"
-        # return 404 http response
-        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    # try:
+    #     post_data = UserPost.objects.all()
+    #
+    # except UserPost.DoesNotExist:
+    #     data["msg"] = "object not found"
+    #     # return 404 http response
+    #     return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
         # if multiple data then true many property
+        post_data = UserPost.objects.all()
         serializers = PostSerializers(post_data, many=True)
         # if we want return json data => JsonResponse
         # if we want return api page => Response
@@ -41,9 +43,12 @@ def api_update_post_view(request, pk):
         return JsonResponse(data=data, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "PUT":
-        # it is used for fetch data from the api
+        # it is used for fetch data from the api (dic)
         data1 = JSONParser().parse(request)
-        serializers = PostSerializers(post_data, data=data1)
+        print(data1)
+        t = data1.get('title', None)
+        print(t)
+        serializers = PostSerializers(post_data, data=data1, partial=True)
         if serializers.is_valid():
             serializers.save()
             data["msg"] = "update successful"
@@ -89,7 +94,7 @@ def api_delete_post_view(request, pk):
         return JsonResponse(data=data)
 
 
-# get , post
+# get , post => views
 class UserPostAPIView(APIView):
 
     def get(self, request):
@@ -105,7 +110,7 @@ class UserPostAPIView(APIView):
             return Response(s.data)
 
 
-# put, delete
+# put, delete => views
 class UserPostCUDAPIView(APIView):
 
     def get_object(self, id):
@@ -123,3 +128,25 @@ class UserPostCUDAPIView(APIView):
             return Response(s.data)
         else:
             return Response({"error": "not update"})
+
+
+# this is for list => views
+class ShowPostList(APIView):
+
+    def get(self, request):
+        l = ShowPost.objects.all()
+        s = ShowPostSerializers(l, many=True)
+        return Response(s.data)
+
+
+# this is for list create =>generics
+class LCUserPost(ListCreateAPIView):
+    queryset = UserPost.objects.all()
+    serializer_class = PostSerializers
+
+
+# this is for retrive update delete  =>generics
+class RUDUserPost(RetrieveUpdateDestroyAPIView):
+    queryset = UserPost.objects.all()
+    serializer_class = PostSerializers
+    lookup_field = 'id'
